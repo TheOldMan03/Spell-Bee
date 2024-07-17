@@ -1,4 +1,4 @@
-export default words7=["abdomen",
+export const words7=["abdomen",
 "abducts",
 "abjured",
 "abolish",

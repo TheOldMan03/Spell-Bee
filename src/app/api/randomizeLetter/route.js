@@ -1,26 +1,19 @@
-import words7 from '@/';
+import { NextResponse } from "next/server";
+import {words7} from "../../../../Words/filtered_words"
 import fs from 'fs'
+import path from "path"
 
-function randomWord(){
-    let Randomword = words7[Math.floor(Math.random() * 3087)];
-    return Randomword
+export function GET(){
+    let randomWord=words7[Math.floor(Math.random() * 3087)];
+    // let randomLetter=randomWord[Math.floor(Math.random()*7)]
+
+    let charList=randomWord.split('')
+    let finalWords=getList(charList);
+
+    return NextResponse.json({"allWords":finalWords,"letters":charList});
 }
 
-function getList(charList){
-
-    let L=[]
-
-    for(let i=0;i<charList.length;i++){
-        const data=fs.readFileSync(charList[i]+'.txt','utf8');
-        const w=data.split('\n').map((word)=>word.trim());
-        L.push(w);
-    }
-
-    return interesection(L);
-}
-
-
-function interesection(listwords){
+function intersection(listwords){
     let set1 = new Set(listwords[0]);
     let set2 = new Set(listwords[1]);
     let set3 = new Set(listwords[2]);
@@ -41,15 +34,17 @@ function interesection(listwords){
     return finalWords;
 }
 
-function getRandomLetter() {
-    let word = randomWord();
-    let randomLetter = word[Math.floor(Math.random()*7)];
+function getList(charList){
+    let L=[]
+    const str=path.join(process.cwd(),'Words')
+    console.log(process.cwd())
 
-    let charList=randomLetter.split('');
-    let finalWords=getList(charList);
+    for(let i=0;i<charList.length;i++){
+        let filepath=path.join(str,charList[i]+'.txt')
+        const data=fs.readFileSync(filepath,'utf8');
+        const w=data.split('\n').map((word)=>word.trim());
+        L.push(w);
+    }
 
-    return finalWords;
+    return intersection(L);
 }
-
-randomWord();
-getRandomLetter();
