@@ -30,7 +30,26 @@ function intersection(listwords){
         }
     });
 
-    let finalWords=Array.from(finalSet);
+    let Words=Array.from(finalSet);
+    return Words;
+}
+
+function filterWords(Words,charList){
+    let finalWords=[]
+    const letter_set=new Set(charList);
+
+    for(let i=0;i<Words.length;i++){
+        let word=Words[i];
+        for(let j=0;j<word.length;j++){
+            if(!letter_set.has(word[j])){
+                break;
+            }
+            if(j==word.length-1){
+                finalWords.push(word);
+            }
+        }    
+    }
+
     return finalWords;
 }
 
@@ -43,8 +62,11 @@ function getList(charList){
         let filepath=path.join(str,charList[i]+'.txt')
         const data=fs.readFileSync(filepath,'utf8');
         const w=data.split('\n').map((word)=>word.trim());
+    
         L.push(w);
     }
 
-    return intersection(L);
+    const intermdiateWords=intersection(L);
+    return filterWords(intermdiateWords,charList);
+    // return intermdiateWords;
 }
