@@ -3,8 +3,8 @@ import {words7} from "../../../../Words/filtered_words"
 import fs from 'fs'
 import path from "path"
 
-export function GET(){
-    let randomWord="rankling"  //words7[Math.floor(Math.random() * 3087)];
+export async function GET(){
+    let randomWord=words7[Math.floor(Math.random() * 3087)];
     // let randomLetter=randomWord[Math.floor(Math.random()*7)]
 
     let charList=randomWord.split('')
