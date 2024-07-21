@@ -5,10 +5,19 @@ import { useEffect,useState } from "react";
 export default function Home() {
 
   const [isClient,setIsClient]=useState(false);
+  const [letters,setLetters]=useState([]);
 
   useEffect(()=>{
     setIsClient(true);
-  },[]);
+
+    if (isClient) {
+      if (localStorage.getItem("letter_arr") === null || getCurrTime() === "12:00:00 AM") {
+        getLetters();
+      } else {
+        setLetters(JSON.parse(localStorage.getItem("letter_arr")));
+      }
+    }
+  },[isClient]);
 
   async function getLetters(){
     const resp=await axios.get("http://localhost:3000/api/randomizeLetter");
@@ -34,13 +43,6 @@ export default function Home() {
     return time_str;
   }
 
-  if(isClient && (localStorage.getItem("letter_arr")===null || getCurrTime()==="12:00:00 AM")){
-    getLetters();
-  }
-
-  const letters=isClient?JSON.parse(localStorage.getItem("letter_arr")):null;
-  console.log(letters);
-  
 
   return (
     // main div
