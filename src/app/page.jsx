@@ -1,8 +1,20 @@
+"use client"
 import axios from "axios";
+import { useEffect,useState } from "react";
 
-export default async function Home() {
+export default function Home() {
 
-  const ISSERVER = typeof window === "undefined";
+  const [isClient,setIsClient]=useState(false);
+
+  useEffect(()=>{
+    setIsClient(true);
+  },[]);
+
+  async function getLetters(){
+    const resp=await axios.get("http://localhost:3000/api/randomizeLetter");
+    const {letters}=resp.data;
+    localStorage.setItem("letter_arr",JSON.stringify(letters)); 
+  }
 
   const getCurrTime=()=>{
     const time_now=new Date();
@@ -22,13 +34,14 @@ export default async function Home() {
     return time_str;
   }
 
-  if(!ISSERVER && (localStorage.getItem("letter_arr")===null || getCurrTime()==="12:00:00 AM")){
-    const resp=await axios.get("http://localhost:3000/api/randomizeLetter");
-    const {letters}=resp.data;
-    localStorage.setItem("letter_arr",JSON.stringify(letters)); 
+  if(isClient && (localStorage.getItem("letter_arr")===null || getCurrTime()==="12:00:00 AM")){
+    getLetters();
   }
 
-  const letters=ISSERVER?null:JSON.parse(localStorage.getItem("letter_arr"));
+  const letters=isClient?JSON.parse(localStorage.getItem("letter_arr")):null;
+  console.log(letters);
+  
+
   return (
     // main div
     <div className="flex flex-col items-center">
@@ -52,13 +65,13 @@ export default async function Home() {
         </div>
 
         <div className="max-w-[60%] max-h-[40%] flex justify-evenly mt-6 min-w-"> {/* This needs to be changed in the end...for now this is temp*/}
-          <div className="w-24 h-24 rounded-full bg-white text-black mx-2 text-2xl flex justify-center items-center">{ISSERVER?null:letters[0]}</div>
-          <div className="w-24 h-24 rounded-full bg-white text-black text-center mx-2 text-2xl flex justify-center items-center">{ISSERVER?null:letters[1]}</div>
-          <div className="w-24 h-24 rounded-full bg-white text-black text-center mx-2 text-2xl flex justify-center items-center">{ISSERVER?null:letters[2]}</div>
-          <div className="w-24 h-24 rounded-full bg-yellow-400 text-black text-center mx-2 text-2xl flex justify-center items-center">{ISSERVER?null:letters[3]}</div>
-          <div className="w-24 h-24 rounded-full bg-white text-black text-center mx-2 text-2xl flex justify-center items-center">{ISSERVER?null:letters[4]}</div>
-          <div className="w-24 h-24 rounded-full bg-white text-black text-center mx-2 text-2xl flex justify-center items-center">{ISSERVER?null:letters[5]}</div>
-          <div className="w-24 h-24 rounded-full bg-white text-black text-center mx-2 text-2xl flex justify-center items-center">{ISSERVER?null:letters[6]}</div>
+          <div className="w-24 h-24 rounded-full bg-white text-black mx-2 text-2xl flex justify-center items-center">{isClient?letters[0]:null}</div>
+          <div className="w-24 h-24 rounded-full bg-white text-black text-center mx-2 text-2xl flex justify-center items-center">{isClient?letters[1]:null}</div>
+          <div className="w-24 h-24 rounded-full bg-white text-black text-center mx-2 text-2xl flex justify-center items-center">{isClient?letters[2]:null}</div>
+          <div className="w-24 h-24 rounded-full bg-yellow-400 text-black text-center mx-2 text-2xl flex justify-center items-center">{isClient?letters[3]:null}</div>
+          <div className="w-24 h-24 rounded-full bg-white text-black text-center mx-2 text-2xl flex justify-center items-center">{isClient?letters[4]:null}</div>
+          <div className="w-24 h-24 rounded-full bg-white text-black text-center mx-2 text-2xl flex justify-center items-center">{isClient?letters[5]:null}</div>
+          <div className="w-24 h-24 rounded-full bg-white text-black text-center mx-2 text-2xl flex justify-center items-center">{isClient?letters[6]:null}</div>
         </div>
 
         <div className="flex mt-12">
