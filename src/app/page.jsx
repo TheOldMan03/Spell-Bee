@@ -6,6 +6,7 @@ export default function Home() {
 
   const [isClient,setIsClient]=useState(false);
   const [letters,setLetters]=useState([]);
+  const [word,setWord]=useState("");
 
   useEffect(()=>{
     setIsClient(true);
@@ -13,11 +14,13 @@ export default function Home() {
     if (isClient) {
       if (localStorage.getItem("letter_arr") === null || getCurrTime() === "12:00:00 AM") {
         getLetters();
-      } else {
+      } 
+      
+      else {
         setLetters(JSON.parse(localStorage.getItem("letter_arr")));
       }
     }
-  },[isClient]);
+  },[isClient,letters]);
 
   async function getLetters(){
     const resp=await axios.get("http://localhost:3000/api/randomizeLetter");
@@ -43,6 +46,20 @@ export default function Home() {
     return time_str;
   }
 
+  const handleInput=(e)=>{
+    setWord(e.target.value);
+  }
+
+  const noBackSpace=(e)=>{
+    if(e.key==="Backspace"){
+      e.preventDefault();
+    }
+  }
+
+  const backSpace=()=>{
+    setWord(word.slice(0,-1));
+  }
+
 
   return (
     // main div
@@ -63,7 +80,18 @@ export default function Home() {
         <div className="mt-6 bg-[#EEF2F8] min-h-[50px] w-[40%]"></div> 
 
         <div className="mt-6">
-          <textarea rows={1} cols={15} maxLength={15} className="bg-black resize-none border-none text-center text-4xl caret-yellow-400 outline-none overflow-hidden"></textarea>
+          <input 
+            value={word} 
+            onChange={handleInput} 
+            rows={1} 
+            cols={15} 
+            maxLength={15} 
+            className="bg-black resize-none border-none text-center text-4xl caret-yellow-400 outline-none overflow-hidden"
+            onKeyDown={noBackSpace}
+
+          >
+
+          </input>
         </div>
 
         <div className="max-w-[60%] max-h-[40%] flex justify-evenly mt-6 min-w-"> {/* This needs to be changed in the end...for now this is temp*/}
@@ -77,7 +105,7 @@ export default function Home() {
         </div>
 
         <div className="flex mt-12">
-          <div className="w-24 h-12 bg-white text-black text-center rounded-full flex justify-center items-center mx-4">Delete</div>
+          <button onClick={backSpace} className="w-24 h-12 bg-white text-black text-center rounded-full flex justify-center items-center mx-4">Delete</button>
           <div className="w-12 h-12 rounded-full bg-white text-black flex justify-center items-center">R</div>
           <div className="w-24 h-12 bg-white text-black text-center rounded-full flex justify-center items-center mx-4">Enter</div>
         </div>
