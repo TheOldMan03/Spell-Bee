@@ -6,26 +6,29 @@ export default function Home() {
 
   const [isClient,setIsClient]=useState(false);
   const [letters,setLetters]=useState([]);
+  const [impLetter,setImpLetter]=useState("")
   const [word,setWord]=useState("");
 
   useEffect(()=>{
     setIsClient(true);
 
     if (isClient) {
-      if (localStorage.getItem("letter_arr") === null || getCurrTime() === "12:00:00 AM") {
+      if (localStorage.getItem("letter_arr") === null && localStorage.getItem("specialLetter")===null) {
         getLetters();
       } 
       
       else {
         setLetters(JSON.parse(localStorage.getItem("letter_arr")));
+        setImpLetter(JSON.parse(localStorage.getItem("specialLetter")))
       }
     }
-  },[isClient,letters]);
+  },[isClient,letters,impLetter]);
 
   async function getLetters(){
     const resp=await axios.get("http://localhost:3000/api/randomizeLetter");
-    const {letters}=resp.data;
+    const {letters,choosenLetter}=resp.data;
     localStorage.setItem("letter_arr",JSON.stringify(letters)); 
+    localStorage.setItem("specialLetter",JSON.stringify(choosenLetter))
   }
 
   const getCurrTime=()=>{
@@ -98,10 +101,10 @@ export default function Home() {
           <div className="w-24 h-24 rounded-full bg-white text-black mx-2 text-2xl flex justify-center items-center">{isClient?letters[0]:null}</div>
           <div className="w-24 h-24 rounded-full bg-white text-black text-center mx-2 text-2xl flex justify-center items-center">{isClient?letters[1]:null}</div>
           <div className="w-24 h-24 rounded-full bg-white text-black text-center mx-2 text-2xl flex justify-center items-center">{isClient?letters[2]:null}</div>
-          <div className="w-24 h-24 rounded-full bg-yellow-400 text-black text-center mx-2 text-2xl flex justify-center items-center">{isClient?letters[3]:null}</div>
+          <div className="w-24 h-24 rounded-full bg-yellow-400 text-black text-center mx-2 text-2xl flex justify-center items-center">{isClient?impLetter:null}</div>
+          <div className="w-24 h-24 rounded-full bg-white text-black text-center mx-2 text-2xl flex justify-center items-center">{isClient?letters[3]:null}</div>
           <div className="w-24 h-24 rounded-full bg-white text-black text-center mx-2 text-2xl flex justify-center items-center">{isClient?letters[4]:null}</div>
           <div className="w-24 h-24 rounded-full bg-white text-black text-center mx-2 text-2xl flex justify-center items-center">{isClient?letters[5]:null}</div>
-          <div className="w-24 h-24 rounded-full bg-white text-black text-center mx-2 text-2xl flex justify-center items-center">{isClient?letters[6]:null}</div>
         </div>
 
         <div className="flex mt-12">
