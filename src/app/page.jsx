@@ -8,6 +8,7 @@ export default function Home() {
   const [letters,setLetters]=useState([]);
   const [impLetter,setImpLetter]=useState("")
   const [word,setWord]=useState("");
+  const [finalWords,setFinalWords]=useState([])
 
   function shuffleArray() {
     const arr=[...letters];
@@ -25,13 +26,15 @@ export default function Home() {
   useEffect(()=>{
 
     if (isClient) {
-      if (localStorage.getItem("letter_arr") === null && localStorage.getItem("specialLetter")===null) {
+      if ((localStorage.getItem("letter_arr") === null || 
+      localStorage.getItem("specialLetter")===null) && localStorage.getItem("specialLetter")===null) {
         getLetters();
       } 
       
       else {
         setLetters(JSON.parse(localStorage.getItem("letter_arr")));
         setImpLetter(JSON.parse(localStorage.getItem("specialLetter")))
+        setFinalWords(JSON.parse(localStorage.getItem("allWords")))
       }
     }
   },[isClient])
@@ -39,29 +42,13 @@ export default function Home() {
 
   async function getLetters(){
     const resp=await axios.get("http://localhost:3000/api/randomizeLetter");
-    const {letters,choosenLetter}=resp.data;
+    const {letters,choosenLetter,allWords}=resp.data;
     localStorage.setItem("letter_arr",JSON.stringify(letters)); 
     localStorage.setItem("specialLetter",JSON.stringify(choosenLetter))
+    localStorage.setItem("allWords",JSON.stringify(allWords))
   }
 
-  // const getCurrTime=()=>{
-  //   const time_now=new Date();
-
-  //   let h=time_now.getHours();
-  //   let m=time_now.getMinutes();
-  //   let s=time_now.getSeconds();
-
-  //   const am_pm=h>=12?"PM":"AM";
-  //   h=h>12?h-12:h;
-  //   h=h?h:12;
-
-  //   const mstr=m<10?"0"+m:m;
-  //   const sstr=s<10?"0"+s:s;
-
-  //   const time_str=`${h}:${mstr}:${sstr} ${am_pm}`;
-  //   return time_str;
-  // }
-
+  
   const handleInput=(e)=>{
     setWord(e.target.value);
   }
@@ -111,13 +98,13 @@ export default function Home() {
         </div>
 
         <div className="max-w-[60%] max-h-[40%] flex justify-evenly mt-6 min-w-"> {/* This needs to be changed in the end...for now this is temp*/}
-          <div className="w-24 h-24 rounded-full bg-white text-black mx-2 text-2xl flex justify-center items-center">{isClient?letters[0]:null}</div>
-          <div className="w-24 h-24 rounded-full bg-white text-black text-center mx-2 text-2xl flex justify-center items-center">{isClient?letters[1]:null}</div>
-          <div className="w-24 h-24 rounded-full bg-white text-black text-center mx-2 text-2xl flex justify-center items-center">{isClient?letters[2]:null}</div>
-          <div className="w-24 h-24 rounded-full bg-yellow-400 text-black text-center mx-2 text-2xl flex justify-center items-center">{isClient?impLetter:null}</div>
+          <div className="w-24 h-24 rounded-full bg-white text-black mx-2 text-2xl flex justify-center items-center">{isClient?letters[1]:null}</div>
           <div className="w-24 h-24 rounded-full bg-white text-black text-center mx-2 text-2xl flex justify-center items-center">{isClient?letters[3]:null}</div>
           <div className="w-24 h-24 rounded-full bg-white text-black text-center mx-2 text-2xl flex justify-center items-center">{isClient?letters[4]:null}</div>
+          <div className="w-24 h-24 rounded-full bg-yellow-400 text-black text-center mx-2 text-2xl flex justify-center items-center">{isClient?impLetter:null}</div>
+          <div className="w-24 h-24 rounded-full bg-white text-black text-center mx-2 text-2xl flex justify-center items-center">{isClient?letters[0]:null}</div>
           <div className="w-24 h-24 rounded-full bg-white text-black text-center mx-2 text-2xl flex justify-center items-center">{isClient?letters[5]:null}</div>
+          <div className="w-24 h-24 rounded-full bg-white text-black text-center mx-2 text-2xl flex justify-center items-center">{isClient?letters[2]:null}</div>
         </div>
 
         <div className="flex mt-12">
