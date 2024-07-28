@@ -9,8 +9,20 @@ export default function Home() {
   const [impLetter,setImpLetter]=useState("")
   const [word,setWord]=useState("");
 
+  function shuffleArray() {
+    const arr=[...letters];
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i],arr[j]] = [arr[j],arr[i]]; // Swap elements
+    }
+    setLetters(arr)
+  }
+
   useEffect(()=>{
     setIsClient(true);
+  },[])
+
+  useEffect(()=>{
 
     if (isClient) {
       if (localStorage.getItem("letter_arr") === null && localStorage.getItem("specialLetter")===null) {
@@ -22,7 +34,8 @@ export default function Home() {
         setImpLetter(JSON.parse(localStorage.getItem("specialLetter")))
       }
     }
-  },[isClient,letters,impLetter]);
+  },[isClient])
+
 
   async function getLetters(){
     const resp=await axios.get("http://localhost:3000/api/randomizeLetter");
@@ -31,23 +44,23 @@ export default function Home() {
     localStorage.setItem("specialLetter",JSON.stringify(choosenLetter))
   }
 
-  const getCurrTime=()=>{
-    const time_now=new Date();
+  // const getCurrTime=()=>{
+  //   const time_now=new Date();
 
-    let h=time_now.getHours();
-    let m=time_now.getMinutes();
-    let s=time_now.getSeconds();
+  //   let h=time_now.getHours();
+  //   let m=time_now.getMinutes();
+  //   let s=time_now.getSeconds();
 
-    const am_pm=h>=12?"PM":"AM";
-    h=h>12?h-12:h;
-    h=h?h:12;
+  //   const am_pm=h>=12?"PM":"AM";
+  //   h=h>12?h-12:h;
+  //   h=h?h:12;
 
-    const mstr=m<10?"0"+m:m;
-    const sstr=s<10?"0"+s:s;
+  //   const mstr=m<10?"0"+m:m;
+  //   const sstr=s<10?"0"+s:s;
 
-    const time_str=`${h}:${mstr}:${sstr} ${am_pm}`;
-    return time_str;
-  }
+  //   const time_str=`${h}:${mstr}:${sstr} ${am_pm}`;
+  //   return time_str;
+  // }
 
   const handleInput=(e)=>{
     setWord(e.target.value);
@@ -109,7 +122,7 @@ export default function Home() {
 
         <div className="flex mt-12">
           <button onClick={backSpace} className="w-24 h-12 bg-white text-black text-center rounded-full flex justify-center items-center mx-4">Delete</button>
-          <div className="w-12 h-12 rounded-full bg-white text-black flex justify-center items-center">R</div>
+          <button onClick={shuffleArray} className="w-12 h-12 rounded-full bg-white text-black flex justify-center items-center">R</button>
           <div className="w-24 h-12 bg-white text-black text-center rounded-full flex justify-center items-center mx-4">Enter</div>
         </div>
 

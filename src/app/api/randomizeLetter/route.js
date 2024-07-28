@@ -4,7 +4,7 @@ import fs from 'fs'
 import path from "path"
 
 export async function GET(){
-    let randomWord=words7[Math.floor(Math.random() * 3087)];
+    let randomWord="rankling"//words7[Math.floor(Math.random() * 3087)];
     let randomLetter=randomWord[Math.floor(Math.random()*7)]
 
     let charList=randomWord.split('')
@@ -23,9 +23,10 @@ function getList(charList,impLetter){
     // Read all files and store the words in a dictionary
     for (let char of charList) {
         let filepath = path.join(str, char + '.txt');
-        const data = fs.readFileSync(filepath, 'utf8');
-        wordDict[char] = data.split('\n').map(word => word.trim());
-    
+        if(!wordDict[char]){
+            const data = fs.readFileSync(filepath, 'utf8');
+            wordDict[char] = data.split('\n').map(word => word.trim());
+        }
     }
 
     let charSet=new Set(charList);
